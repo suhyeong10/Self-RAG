@@ -200,13 +200,11 @@ class SelfRAG:
         elif "[Continue to Use Evidence]" in response:
             tokens.append("continue_evidence")
 
-        # ISREL (Is Relevant) 토큰들
         if "[Relevant]" in response:
             tokens.append("relevant")
         elif "[Irrelevant]" in response:
             tokens.append("irrelevant")
 
-        # ISSUP (Is Supported) 토큰들
         if "[Fully supported]" in response:
             tokens.append("fully_supported")
         elif "[Partially supported]" in response:
@@ -214,7 +212,6 @@ class SelfRAG:
         elif "[No support / Contradictory]" in response:
             tokens.append("no_support")
 
-        # ISUSE (Is Useful) 토큰들 - 5점 척도
         for i in range(1, 6):
             if f"[Utility:{i}]" in response:
                 tokens.append(f"utility_{i}")
@@ -225,13 +222,11 @@ class SelfRAG:
     def _calculate_response_score(self, reflection_tokens: List[str]) -> float:
         score = 0.0
 
-        # Score of ISREL
         if "relevant" in reflection_tokens:
             score += 1.0
         elif "irrelevant" in reflection_tokens:
             score -= 1.0
 
-        # Score of ISSUP
         if "fully_supported" in reflection_tokens:
             score += 2.0
         elif "partially_supported" in reflection_tokens:
@@ -239,7 +234,6 @@ class SelfRAG:
         elif "no_support" in reflection_tokens:
             score -= 2.0
         
-        # Score of ISUSE
         for i in range(1, 6):
             if f"utility_{i}" in reflection_tokens:
                 score += i * 0.5
